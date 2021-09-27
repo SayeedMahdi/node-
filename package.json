@@ -1,0 +1,25 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "all node projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sayeed Mahdi Mousavi",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SayeedMahdi/Motor-Bike-sell.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SayeedMahdi/Motor-Bike-sell/issues"
+  },
+  "homepage": "https://github.com/SayeedMahdi/Motor-Bike-sell#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "jshint": "^2.13.1",
+    "mongoose": "^6.0.7",
+    "underscore": "^1.13.1"
+  }
+}
