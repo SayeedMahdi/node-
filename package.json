@@ -18,8 +18,10 @@
   "homepage": "https://github.com/SayeedMahdi/Motor-Bike-sell#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "joi": "^17.4.2",
     "jshint": "^2.13.1",
     "mongoose": "^6.0.7",
+    "nodemon": "^2.0.13",
     "underscore": "^1.13.1"
   }
 }
