@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost:27017/Exercise-1", {
     useUnifiedTopology: true,
     useNewUrlParser: true
-})
+}) 
     .then(() => console.log("connected with database."))
     .catch(e => console.log(e));
 
@@ -26,7 +26,8 @@ const schema = new mongoose.Schema({
     isPublished: Boolean,
     catagory: { type: String, required: true, enum: ["web", "mobile", "network"] },
     price: {
-        set:e=>Math.round(e)
+        get:e=> Math.round(e),
+        set:e=>Math.round(e),//set a round value
         type: Number,
         min: 12, max: 500,
         required: function () { return this.isPublished }
@@ -39,18 +40,31 @@ async function create() {
         const course = new Course({
             name: "new working",
             author: "Mahdi mousavi",
-            tags: [],
+            tags: [" soft ware worked "],
             isPublished: false,
-            price: 33,
-            catagory: "we"
+            price: 33.23,
+            catagory: "network"
         });
         const result = await course.save();
         console.log(result);
     } catch (err) {
-        for(f in err.errors){
-        console.log(err.errors[f]);
+        for(field in err.errors){
+        console.log(err.errors[field].message);
     }
 }
 }
+async function getcourses(){
+    try{
+        const course=await Course
+        .find({_id:"61559328906e90750c9e1e74"})
+        .limit(10)
+      ;
+        console.log(course);
 
-create();
+    }catch(err){
+        for (field in Course){
+            console.log(err.error[field].message);
+        }
+    }
+}
+getcourses();
