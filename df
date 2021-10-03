@@ -1,0 +1,265 @@
+[1mdiff --git a/index.js b/index.js[m
+[1mindex 271eefc..0881583 100644[m
+[1m--- a/index.js[m
+[1m+++ b/index.js[m
+[36m@@ -1,52 +1,100 @@[m
+ //express api[m
+ const express = require('express');[m
+[31m-const Joi=require("joi");[m
+[32m+[m[32mconst Joi = require("joi");[m
+ const app = express();[m
+[32m+[m[32mconst morgon=require("morgan")[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32mapp.use(morgon("tiny"));[m
+ app.use(express.json());[m
+ [m
+ [m
+ [m
+ //the database array[m
+[31m-const courses=[[m
+[31m-    {id:1 , name:"course1"},[m
+[31m-    {id:2, name:"course2"},[m
+[31m-    {id:3, name:"course3"}[m
+[32m+[m[32mconst courses = [[m
+[32m+[m[32m    { id: 1, name: "course1" },[m
+[32m+[m[32m    { id: 2, name: "course2" },[m
+[32m+[m[32m    { id: 3, name: "course3" }[m
+ ];[m
+ [m
+ [m
+ //get all courses from array with postman[m
+[31m-app.get("/api/courses",(req,res)=>{[m
+[32m+[m[32mapp.get("/api/courses", (req, res) => {[m
+     res.send(courses);[m
+ });[m
+ [m
+ //get specific course from array courses[m
+ app.get('/api/Courses/:id', (req, res) => {[m
+[31m-    const result=courses.find(c=>c.id=== parseInt( req.params.id));[m
+[31m-    if(!result) res.status(404).send("your request id not found");[m
+[32m+[m[32m    const result = find_id(req.params.id);[m
+     res.send(result);[m
+[31m-  [m
+[32m+[m
+ });[m
+ [m
+ [m
+ //post an new course and validate it[m
+[31m-app.post("/api/Courses",(req,res)=>{[m
+[31m-    const schema={[m
+[31m-        name:Joi.string().required().min(3)[m
+[32m+[m[32mapp.post("/api/Courses", (req, res) => {[m
+[32m+[m
+[32m+[m[32m    const { error } = name_validation(req.body);[m
+[32m+[m[32m    if (error) {[m
+[32m+[m[32m        //404 bad request[m
+[32m+[m[32m        return res.status(404).send(error.details[0].message);[m
+[32m+[m[32m    }[m
+[32m+[m[32m    const cours = {[m
+[32m+[m[32m        id: courses.length + 1,[m
+[32m+[m[32m        name: req.body.name[m
+     }[m
+[31m-    const result=Joi.validata(req.body,schema);[m
+[31m-    if(result.error){[m
+[32m+[m[32m    courses.push(cours);[m
+[32m+[m[32m    res.send("The class added to courses ");[m
+[32m+[m[32m});[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32m//update a course[m
+[32m+[m[32mapp.put("/api/Courses/:id", (req, res) => {[m
+[32m+[m[32m    const course = find_id(req.params.id);[m
+[32m+[m[32m    if (!course) res.status(404).send("your request id not found");[m
+[32m+[m[32m    const { error } = name_validation(req.body);[m
+[32m+[m[32m    if (error) {[m
+         //404 bad request[m
+[31m-       return  res.status(404).send(result.error.details[0].message);[m
+[32m+[m[32m        return res.status(404).send(error.details[0].message);[m
+     }[m
+[31m-    const cours={[m
+[31m-    id:courses.length+1,[m
+[31m-    name:req.body.name[m
+[31m-}[m
+[31m-courses.push(cours);[m
+[31m-res.send("The class added to courses ");[m
+[32m+[m[32m    course.name = req.body.name;[m
+[32m+[m[32m    res.send(course);[m
+[32m+[m[32m});[m
+[32m+[m
+[32m+[m
+[32m+[m[32m//delete a specific course[m
+[32m+[m[32mapp.delete("/api/Courses/:id",(req,res)=>{[m
+[32m+[m[32m    //first find the id[m
+[32m+[m[32m    const course=find_id(req.params.id);[m
+[32m+[m[32m    if (!course) res.status(404).send("your request id not found");[m
+[32m+[m[32m    const index=courses.indexOf(course);[m
+[32m+[m[32m    courses.splice(index,1);[m
+[32m+[m[32m    res.send(course);[m
+ });[m
+[31m-const port = 3000;[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32m//function for findig a course[m
+[32m+[m[32mfunction find_id(id) {[m
+[32m+[m[32m    const result = courses.find(c => c.id === parseInt(id));[m
+[32m+[m[32m    return result;[m
+[32m+[m[41m   [m
+[32m+[m[32m}[m
+[32m+[m[32m//funtion for validation[m
+[32m+[m[32mfunction name_validation(name) {[m
+[32m+[m[32m    const schema = Joi.object({[m
+[32m+[m[32m        name: Joi.string().min(3).required()[m
+[32m+[m[32m    });[m
+[32m+[m[32m    return schema.validate(name);[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m//make a listner to specific port[m
+[32m+[m[32mconst port = process.env.Port || 3000;[m
+ app.listen(port, () => {[m
+[31m-  console.log(`Example app listening at http://localhost:${port}`);[m
+[32m+[m[32m    console.log(`Example app listening at http://localhost:${port}`);[m
+ })[m
+ console.log("wellcome back mahdi");[m
+\ No newline at end of file[m
+[1mdiff --git a/middle.js b/middle.js[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4127e0f[m
+[1m--- /dev/null[m
+[1m+++ b/middle.js[m
+[36m@@ -0,0 +1,24 @@[m
+[32m+[m[32mvar express = require('express');[m
+[32m+[m[32mvar config =require("config");[m
+[32m+[m[32mvar app = express();[m
+[32m+[m
+[32m+[m[32mvar myLogger = function (req, res, next) {[m
+[32m+[m[32m  console.log('LOGGED');[m
+[32m+[m[32m  next();[m
+[32m+[m[32m}[m
+[32m+[m[32mvar requestTime = function (req, res, next) {[m
+[32m+[m[32m    req.requestTime = Date.now()[m
+[32m+[m[32m    next()[m
+[32m+[m[32m  }[m
+[32m+[m[32mapp.use(myLogger);[m
+[32m+[m[32mapp.use(requestTime);[m
+[32m+[m
+[32m+[m[32mapp.get('/', function (req, res) {[m
+[32m+[m[32m  res.send('Hello World!');[m
+[32m+[m[32m})[m
+[32m+[m[32mapp.listen(3000,()=>{[m
+[32m+[m[32m    console.log("listen to port");[m
+[32m+[m[32m});[m
+[32m+[m[32mconsole.log("customer name:"+config.get("name"));[m
+[32m+[m[32mconsole.log("customer name:"+config.get("email.host"));[m
+[32m+[m[32mconsole.log("customer name:"+config.get("gender"));[m
+[1mdiff --git a/package-lock.json b/package-lock.json[m
+[1mindex 9a4f676..2ed8bd6 100644[m
+[1m--- a/package-lock.json[m
+[1m+++ b/package-lock.json[m
+[36m@@ -138,6 +138,14 @@[m
+       "resolved": "https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz",[m
+       "integrity": "sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA=="[m
+     },[m
+[32m+[m[32m    "basic-auth": {[m
+[32m+[m[32m      "version": "2.0.1",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/basic-auth/-/basic-auth-2.0.1.tgz",[m
+[32m+[m[32m      "integrity": "sha512-NF+epuEdnUYVlGuhaxbbq+dvJttwLnGY+YixlXlME5KpQ5W3CnXA5cVTneY3SPbPDRkcjMbifrwmFYcClgOZeg==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "safe-buffer": "5.1.2"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "binary-extensions": {[m
+       "version": "2.2.0",[m
+       "resolved": "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.2.0.tgz",[m
+[36m@@ -332,6 +340,14 @@[m
+       "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz",[m
+       "integrity": "sha1-2Klr13/Wjfd5OnMDajug1UBdR3s="[m
+     },[m
+[32m+[m[32m    "config": {[m
+[32m+[m[32m      "version": "3.3.6",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/config/-/config-3.3.6.tgz",[m
+[32m+[m[32m      "integrity": "sha512-Hj5916C5HFawjYJat1epbyY2PlAgLpBtDUlr0MxGLgo3p5+7kylyvnRY18PqJHgnNWXcdd0eWDemT7eYWuFgwg==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "json5": "^2.1.1"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "configstore": {[m
+       "version": "5.0.1",[m
+       "resolved": "https://registry.npmjs.org/configstore/-/configstore-5.0.1.tgz",[m
+[36m@@ -884,6 +900,14 @@[m
+       "resolved": "https://registry.npmjs.org/json-buffer/-/json-buffer-3.0.0.tgz",[m
+       "integrity": "sha1-Wx85evx11ne96Lz8Dkfh+aPZqJg="[m
+     },[m
+[32m+[m[32m    "json5": {[m
+[32m+[m[32m      "version": "2.2.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/json5/-/json5-2.2.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-f+8cldu7X/y7RAJurMEJmdoKXGB/X550w2Nr3tTbezL6RwEE/iMcm+tZnXeoZtKuOq6ft8+CqzEkrIgx1fPoQA==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "minimist": "^1.2.5"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "kareem": {[m
+       "version": "2.3.2",[m
+       "resolved": "https://registry.npmjs.org/kareem/-/kareem-2.3.2.tgz",[m
+[36m@@ -1038,6 +1062,25 @@[m
+         }[m
+       }[m
+     },[m
+[32m+[m[32m    "morgan": {[m
+[32m+[m[32m      "version": "1.10.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/morgan/-/morgan-1.10.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-AbegBVI4sh6El+1gNwvD5YIck7nSA36weD7xvIxG4in80j/UoK8AEGaWnnz8v1GxonMCltmlNs5ZKbGvl9b1XQ==",[m
+[32m+[m[32m      "requires": {[m
+[32m+[m[32m        "basic-auth": "~2.0.1",[m
+[32m+[m[32m        "debug": "2.6.9",[m
+[32m+[m[32m        "depd": "~2.0.0",[m
+[32m+[m[32m        "on-finished": "~2.3.0",[m
+[32m+[m[32m        "on-headers": "~1.0.2"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "depd": {[m
+[32m+[m[32m          "version": "2.0.0",[m
+[32m+[m[32m          "resolved": "https://registry.npmjs.org/depd/-/depd-2.0.0.tgz",[m
+[32m+[m[32m          "integrity": "sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw=="[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "mpath": {[m
+       "version": "0.8.4",[m
+       "resolved": "https://registry.npmjs.org/mpath/-/mpath-0.8.4.tgz",[m
+[36m@@ -1136,6 +1179,11 @@[m
+         "ee-first": "1.1.1"[m
+       }[m
+     },[m
+[32m+[m[32m    "on-headers": {[m
+[32m+[m[32m      "version": "1.0.2",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/on-headers/-/on-headers-1.0.2.tgz",[m
+[32m+[m[32m      "integrity": "sha512-pZAE+FJLoyITytdqK0U5s+FIpjN0JP3OzFi/u8Rx+EV5/W+JTWGXG8xFzevE7AjBfDqHv/8vL8qQsIhHnqRkrA=="[m
+[32m+[m[32m    },[m
+     "once": {[m
+       "version": "1.4.0",[m
+       "resolved": "https://registry.npmjs.org/once/-/once-1.4.0.tgz",[m
+[1mdiff --git a/package.json b/package.json[m
+[1mindex 45ff286..2597ccb 100644[m
+[1m--- a/package.json[m
+[1m+++ b/package.json[m
+[36m@@ -17,11 +17,14 @@[m
+   },[m
+   "homepage": "https://github.com/SayeedMahdi/Motor-Bike-sell#readme",[m
+   "dependencies": {[m
+[32m+[m[32m    "config": "^3.3.6",[m
+     "express": "^4.17.1",[m
+     "joi": "^17.4.2",[m
+     "jshint": "^2.13.1",[m
+     "mongoose": "^6.0.7",[m
+[32m+[m[32m    "morgan": "^1.10.0",[m
+     "nodemon": "^2.0.13",[m
+[32m+[m[32m    "rc": "^1.2.8",[m
+     "underscore": "^1.13.1"[m
+   }[m
+ }[m
