@@ -4,7 +4,7 @@ const mongooes=require("mongoose");
 const {Genres}=require("../model/genres");
 const {Movie , validatemovie}=require("../model/moveis");
 
-
+try{
 //all movies get with api
 router.get("/",async(req,res)=>{
     try{
@@ -30,6 +30,7 @@ router.post("/",async(req,res)=>{
             _id:genre.id,
             name:genre.name
         },
+        description: String,
       numberinStock:req.body.numberinStock,
     dailyRate:req.body.dailyRate
     });
@@ -53,7 +54,8 @@ router.put("/:id",async (req, res)=>{
         title:req.body.title,
         genre_id:req.body.genreId,
         numberinStock:req.body.numberinStock,
-        dailyRate:req.body.dailyRate
+        dailyRate:req.body.dailyRate,
+        description:req.body.description
 
     });
     if(!movie) return res.status(400).send("The movie does not find");
@@ -73,4 +75,7 @@ router.put("/:id",async (req, res)=>{
     });
 
 });
+}catch(e){
+    console.log(e.message);
+}
 module.exports=router;

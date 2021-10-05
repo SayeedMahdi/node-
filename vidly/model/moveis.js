@@ -4,13 +4,14 @@ const joi = require('joi');
 const {genres_schema}=require("./genres");
 
 
-const movie_schema=new mongoose.Schema(mongoose.Schema({
+const movie_schema=new mongoose.Schema({
     title: {
       type:String,
       required: true,
       maxlength: 50,
       minlength: 5
     },
+    description:String,
     genre:{
         type:genres_schema
     },
@@ -24,7 +25,7 @@ const movie_schema=new mongoose.Schema(mongoose.Schema({
         type:Number,
         max:10
     }
-  }));
+  });
 const Movie = mongoose.model("movie", movie_schema);
 
   
