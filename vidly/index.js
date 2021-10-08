@@ -1,14 +1,17 @@
 const express = require('express');
-const genres = require('./routes/genres');
 const mongoose=require("mongoose");
 const app = express();
+
+const genres = require('./routes/genres');
 const customer=require('./routes/customer');
 const rentals=require("./routes/rentals");
-//loud the movies to rout
 const movie=require('./routes/movies');
-
+const users=require("./routes/user");
 
 app.use(express.json());
+
+//loud the all objects to rout
+app.use("/api/users",users);
 app.use("/api/rentals",rentals);
 app.use('/api/genres', genres);
 app.use('/api/customer',customer);

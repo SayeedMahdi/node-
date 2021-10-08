@@ -39,9 +39,12 @@ router.post("/",async(req,res)=>{
 });
 //find an specific movie
 router.get("/:id",async (req, res)=>{
-    const movie=await Movie.findById(req.params.id);
-    if(!movie) return res.status(404).send("The movie woth the id didn't recognized");
-    res.send(movie);
+    await Movie.findById(req.params.id)
+    .then( e=> res.send(e))
+    .catch(e=> res.send(e.message));
+    
+    // if(!movie) return res.status(404).send("The movie with the id didn't recognized");
+    // res.send(movie);
 });
 //ubdate 
 router.put("/:id",async (req, res)=>{
